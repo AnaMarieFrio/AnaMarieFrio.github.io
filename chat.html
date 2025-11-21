@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Real-Time Chat App</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            margin: 0;
+        }
+        #chat-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+        #messages {
+            height: 400px;
+            padding: 15px;
+            overflow-y: auto;
+            background: #fafafa;
+        }
+        .message {
+            margin-bottom: 12px;
+        }
+        .message strong {
+            color: #2196f3;
+        }
+        #input-area {
+            display: flex;
+            border-top: 1px solid #ddd;
+        }
+        #messageInput {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            outline: none;
+        }
+        #sendBtn {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            cursor: pointer;
+        }
+        #username-box {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            background: #fff;
+        }
+        #usernameInput {
+            width: 70%;
+            padding: 8px;
+        }
+        #joinBtn {
+            padding: 8px 12px;
+            background: #4caf50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        #typing {
+            padding: 6px 12px;
+            font-size: 13px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+<div id="chat-container">
+
+    <!-- Username Section -->
+    <div id="username-box">
+        <input id="usernameInput" placeholder="Enter your username..." />
+        <button id="joinBtn">Join</button>
+    </div>
+
+    <!-- Messages -->
+    <div id="messages"></div>
+
+    <!-- Typing Indicator -->
+    <div id="typing"></div>
+
+    <!-- Chat Input -->
+    <div id="input-area">
+        <input id="messageInput" placeholder="Type message..." disabled />
+        <button id="sendBtn" disabled>Send</button>
+    </div>
+
+</div>
+
+<!-- Socket IO Client -->
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    const socket = io();
+
+    const messages = document.getElementById("messages");
+    const messageInput = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const usernameInput = document.getElementById("usernameInput");
+    const joinBtn = document.getElementById("joinBtn");
+    const typingBox = document.getElementById("typing");
+
+    let username = "";
+    let typingTimeout;
+
+    joinBtn.onclick = () => {
+        username = usernameInput.value.trim();
+        if (!username) return alert("Enter username");
+
+        socket.emit("join", username);
+
+        usernameInput.disabled = true;
+        joinBtn.disabled = true;
+
+        messageInput.disabled = false;
+        sendBtn.disabled = false;
+    };
+
+    sendBtn.onclick = sendMsg;
+
+    messageInput.addEventListener("keyup", (e) => {
+        if (e.key === "Enter") sendMsg();
+
+        socket.emit("typing", true);
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => {
+            socket.emit("typing", false);
+        }, 700);
+    });
+
+    function sendMsg() {
+        const text = messageInput.value.trim();
+        if (!text) return;
+
+        socket.emit("message", { text });
+        messageInput.value = "";
+    }
+
+    socket.on("message", (data) => {
+        const msg = document.createElement("div");
+        msg.className = "message";
+        msg.innerHTML = `<strong>${data.username}:</strong> ${data.text}`;
+        messages.appendChild(msg);
+        messages.scrollTop = messages.scrollHeight;
+    });
+
+    socket.on("systemMessage", (text) => {
+        const msg = document.createElement("div");
+        msg.className = "message";
+        msg.style.color = "#777";
+        msg.style.fontStyle = "italic";
+        msg.textContent = text;
+        messages.appendChild(msg);
+    });
+
+    socket.on("typing", ({ username, isTyping }) => {
+        typingBox.textContent = isTyping ? `${username} is typing...` : "";
+    });
+</script>
+
+</body>
+</html>
