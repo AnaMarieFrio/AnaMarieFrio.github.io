@@ -66,7 +66,28 @@
     color: #333;
     max-width: 600px;
 }
-
+.image-box img{
+    width: 50%;
+    height: 50%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+.project-card {
+    height: 430px;      /* same height */
+    padding: 24px;      /* same padding as p-6 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.project-image {
+    height: 160px;      /* same image height */
+    overflow: hidden;
+}
+.project-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
     </style>
 </head>
@@ -132,12 +153,14 @@
     </div>
 </section>
 
-        <div id="resume" class="a4  p-6 max-w-3xl mx-auto shadow-md text-black bg-white">
-             <img 
-    src="img/3.jpeg" 
-    alt="Profile Photo" 
-    class="mx-auto rounded-full w-32 h-32 mb-4 object-cover border-2 border-gray-300 shadow-sm"
-/>
+        <div id="resume" class="a4 p-6 max-w-3xl mx-auto shadow-md text-black bg-white">
+
+    <!-- Image Box -->
+<div class="w-32 h-32 p-1 bg-white border border-gray-300 rounded-md shadow overflow-hidden mx-auto">
+    <img src="img/3.jpeg" alt="Image" class="w-full h-full object-cover rounded">
+</div>
+
+
 
         <h2 class="text-center text-3xl font-bold mb-1">Ana Marie Frio</h2>
         <div class="text-center mb-4">
@@ -188,6 +211,7 @@
             <li>Contact Number: 09538503551</li>
         </ul>
     </section>
+     </div>
 
 </div>
 
@@ -603,7 +627,7 @@ document.getElementById('downloadBtn').addEventListener('click', function() {
                         </div>
                          <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl transition cursor-pointer"
                         <div class="flex items-center gap-4 pt-4 border-t border-gray-800">
-                            <a href="#" class="text-blue-400 hover:text-blue-300 flex items-center gap-2">
+                            <a href="chat.html" class="text-blue-400 hover:text-blue-300 flex items-center gap-2">
                                 <i class="fas fa-link"></i> Live Demo
                             </a>
                             <a href="https://github.com/AnaMarieFrio/AnaMarieFrio.github.io" class="text-gray-400 hover:text-white flex items-center gap-2">
